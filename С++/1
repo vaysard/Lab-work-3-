@@ -1,0 +1,35 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <functional> // для std::greater
+
+int main() {
+    // Максимальная куча (по умолчанию)
+    std::priority_queue<int> maxHeap;
+    maxHeap.push(10);
+    maxHeap.push(30);
+    maxHeap.push(20);
+
+    std::cout << "Максимальная куча: " << std::endl;
+    while (!maxHeap.empty()) {
+        std::cout << maxHeap.top() << " "; // верхний элемент (наибольший)
+        maxHeap.pop();
+    }
+    std::cout << std::endl;
+
+    // Минимальная куча
+    // Используем std::greater<int> в качестве компаратора
+    std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
+    minHeap.push(10);
+    minHeap.push(30);
+    minHeap.push(20);
+
+    std::cout << "Минимальная куча: " << std::endl;
+    while (!minHeap.empty()) {
+        std::cout << minHeap.top() << " "; // верхний элемент (наименьший)
+        minHeap.pop();
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
