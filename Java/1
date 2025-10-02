@@ -1,0 +1,169 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+
+public class BinaryHeap<T extends Comparable<T>> {
+
+    private ArrayList<T> heap;
+
+    public BinaryHeap() {
+        heap = new ArrayList<>();
+    }
+
+    public BinaryHeap(T[] array) {
+        heap = new ArrayList<>(Arrays.asList(array));
+        // Построение кучи за O(n)
+        for (int i = (heap.size() - 2) / 2; i >= 0; i--) {
+            heapifyDown(i);
+        }
+    }
+
+    // Получить индекс родителя
+    private int parent(int i) {
+        return (i - 1) / 2;
+    }
+
+    // Получить индекс левого потомка
+    private int leftChild(int i) {
+        return (2 * i) + 1;
+    }
+
+    // Получить индекс правого потомка
+    private int rightChild(int i) {
+        return (2 * i) + 2;
+    }
+
+
+    // Вставка элемента в кучу
+    public void insert(T key) {
+        heap.add(key);
+        heapifyUp(heap.size() - 1);
+    }
+
+    // Удаление минимального элемента (для MinHeap)
+    public T extractMin() {
+        if (heap.isEmpty()) {
+            throw new NoSuchElementException("Heap is empty");
+        }
+
+        T root = heap.get(0);
+        // Заменяем корень последним элементом
+        heap.set(0, heap.get(heap.size() - 1));
+        heap.remove(heap.size() - 1);
+
+        // Восстанавливаем свойство кучи
+        if (!heap.isEmpty()) {
+            heapifyDown(0);
+        }
+        return root;
+    }
+
+
+    // Удаление элемента по индексу
+    public T remove(int index) {
+        if (index < 0 || index >= heap.size()) {
+            throw new IndexOutOfBoundsException("Index is out of bounds.");
+        }
+
+        T removedValue = heap.get(index);
+
+        // Заменяем удаляемый элемент последним
+        heap.set(index, heap.get(heap.size() - 1));
+        heap.remove(heap.size() - 1);
+
+        //  Восстанавливаем свойство кучи
+        if (!heap.isEmpty()) {
+            heapifyDown(index); // Сначала пробуем вниз
+            heapifyUp(index);   // ... а если это не помогло, пробуем вверх
+        }
+
+        return removedValue;
+    }
+
+
+    // Получение минимального элемента (не удаляет его)
+    public T peek() {
+        if (heap.isEmpty()) {
+            throw new NoSuchElementException("Heap is empty");
+        }
+        return heap.get(0);
+    }
+
+
+    // "Проталкивание" элемента вверх по куче (после вставки)
+    private void heapifyUp(int i) {
+        while (i > 0 && heap.get(parent(i)).compareTo(heap.get(i)) > 0) {
+            // Меняем местами с родителем
+            swap(i, parent(i));
+            i = parent(i);
+        }
+    }
+
+    // "Проталкивание" элемента вниз по куче (после удаления)
+    private void heapifyDown(int i) {
+        int minIndex = i;
+        int left = leftChild(i);
+        int right = rightChild(i);
+
+        if (left < heap.size() && heap.get(left).compareTo(heap.get(minIndex)) < 0) {
+            minIndex = left;
+        }
+
+        if (right < heap.size() && heap.get(right).compareTo(heap.get(minIndex)) < 0) {
+            minIndex = right;
+        }
+
+        if (minIndex != i) {
+            swap(i, minIndex);
+            heapifyDown(minIndex); // Рекурсивно вниз
+        }
+    }
+
+    // Функция для обмена двух элементов в куче
+    private void swap(int i, int j) {
+        T temp = heap.get(i);
+        heap.set(i, heap.get(j));
+        heap.set(j, temp);
+    }
+
+    // Размер кучи
+    public int size() {
+        return heap.size();
+    }
+
+    // Проверка, пуста ли куча
+    public boolean isEmpty() {
+        return heap.isEmpty();
+    }
+
+    // Очистка кучи
+    public void clear() {
+        heap.clear();
+    }
+
+
+    public class Main {
+    public static void main(String[] args) {
+        Integer[] numbers = {5, 3, 8, 4, 1, 9, 2, 7, 6};
+        BinaryHeap<Integer> minHeap = new BinaryHeap<>(numbers);
+
+        System.out.println("Min Heap: " + minHeap.toString());  // используйте toString() или minHeap.heap
+
+        System.out.println("Extract Min: " + minHeap.extractMin());
+        System.out.println("Heap after extractMin: " + minHeap.toString());
+
+        minHeap.insert(0);
+        System.out.println("Heap after inserting 0: " + minHeap.toString());
+
+        System.out.println("Size of Heap: " + minHeap.size());
+    }
+}
+
+
+    @Override
+    public String toString() {
+        return "BinaryHeap{" +
+                "heap=" + heap +
+                '}';
+    }
+}
